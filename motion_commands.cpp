@@ -40,6 +40,7 @@ void goToMousePointer(Sprite &sprite, int xMouse, int yMouse)
 }
 void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength)
 {
+    static mt19937 gen(time(nullptr));
     uniform_real_distribution<> x(sprite.spriteWidth/2.0, windowWidth-sprite.spriteWidth/2.0);
     uniform_real_distribution<> y(sprite.spriteHeight/2.0, windowLength-sprite.spriteHeight/2.0);
     sprite.xCenter=x(gen);
