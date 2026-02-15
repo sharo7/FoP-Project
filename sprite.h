@@ -2,6 +2,7 @@
 #define SPRITE_H
 #include <bits/stdc++.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 using namespace std;
 struct Sprite
 {
@@ -11,6 +12,10 @@ struct Sprite
     bool visible;
     SDL_Texture* spriteTexture;
     int spriteWidth, spriteHeight;//SDL_QueryTexture(spriteTexture, nullptr, nullptr, &spriteWidth, &spriteHeight);
+    bool saying;
+    bool thinking;
+    map<string, Mix_Chunk*> spriteSounds;
+
 };
 void correctDirRange(Sprite& sprite);//valid range for the angle is -180 to 180 degrees
 Sprite createSprite(SDL_Texture* texture, int windowWidth, int windowLength);

@@ -7,5 +7,9 @@ add_executable(project main.cpp
         sprite.h
         sprite.cpp
         motion_commands.h
-        motion_commands.cpp)
+        motion_commands.cpp
+        looks_commands.h
+        looks_commands.cpp
+        sound_commands.h
+        sound_commands.cpp)
 target_link_libraries(${PROJECT_NAME} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer)

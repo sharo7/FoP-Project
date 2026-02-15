@@ -1,5 +1,5 @@
 #include "motion_commands.h"
-mt19937 gen(time(nullptr));
+
 void move(Sprite &sprite, double n)
 {
     sprite.xCenter+=n*cos(sprite.direction*M_PI/180);
