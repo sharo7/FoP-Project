@@ -9,4 +9,6 @@ void playSoundUntilDone(Sprite& sprite, const string& soundName);//the program w
 void stopAllSounds(Sprite& sprite);
 void setVolumeTo(Sprite& sprite, const string& soundName, int volume);
 void changeVolumeBy(Sprite& sprite, const string& soundName, int volume);
+void freeAllSounds(Sprite& sprite);//this function should be called at the end of the program for every sprite that
+//has used sound to free the memory from all of them
 #endif //SOUND_COMMANDS_H

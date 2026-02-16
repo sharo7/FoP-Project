@@ -1,7 +1,7 @@
 #include "sound_commands.h"
 void addSound(Sprite& sprite, const string& soundFile, const string& soundName)
 {
-    sprite.spriteSounds[soundName]= Mix_LoadWAV(soundFile.c_str());
+    sprite.spriteSounds[soundName]=Mix_LoadWAV(soundFile.c_str());
 }
 void startSound(Sprite& sprite, const string& soundName)
 {
@@ -47,5 +47,11 @@ void changeVolumeBy(Sprite& sprite, const string& soundName, int volume)
     if (volume>MIX_MAX_VOLUME)
         volume=MIX_MAX_VOLUME;
     Mix_VolumeChunk(sprite.spriteSounds[soundName], volume);
+}
+void freeAllSounds(Sprite& sprite)
+{
+    for (auto& sound:sprite.spriteSounds)
+        Mix_FreeChunk(sound.second);
+    sprite.spriteSounds.clear();
 }
 

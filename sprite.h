@@ -12,8 +12,6 @@ struct Sprite
     bool visible;
     SDL_Texture* spriteTexture;
     int spriteWidth, spriteHeight;//SDL_QueryTexture(spriteTexture, nullptr, nullptr, &spriteWidth, &spriteHeight);
-    bool saying;
-    bool thinking;
     map<string, Mix_Chunk*> spriteSounds;
 
 };
