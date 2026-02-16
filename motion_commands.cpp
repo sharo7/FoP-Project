@@ -1,5 +1,7 @@
 #include "motion_commands.h"
 
+mt19937 gen(time(nullptr)); //this should be added to main and deleted from here later on
+
 void move(Sprite &sprite, double n) {
     sprite.xCenter += n * cos(sprite.direction * M_PI / 180);
     sprite.yCenter -= n * sin(sprite.direction * M_PI / 180);
@@ -39,7 +41,6 @@ void goToMousePointer(Sprite &sprite, int xMouse, int yMouse) {
 }
 
 void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength) {
-    static mt19937 gen(time(nullptr));
     uniform_real_distribution<> x(sprite.spriteWidth / 2.0, windowWidth - sprite.spriteWidth / 2.0);
     uniform_real_distribution<> y(sprite.spriteHeight / 2.0, windowLength - sprite.spriteHeight / 2.0);
     sprite.xCenter = x(gen);
@@ -47,8 +48,20 @@ void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength) {
 }
 
 void ifOnEdgeBounce(Sprite &sprite, int windowWidth, int windowLength) {
-    if (sprite.xCenter - sprite.spriteWidth / 2.0 < 0 || sprite.xCenter + sprite.spriteWidth / 2.0 > windowWidth)
+    if (sprite.xCenter - sprite.spriteWidth / 2.0 < 0) {
+        sprite.xCenter = sprite.spriteWidth / 2.0;
         pointInDirection(sprite, -sprite.direction);
-    if (sprite.yCenter - sprite.spriteHeight / 2.0 < 0 || sprite.yCenter + sprite.spriteHeight / 2.0 > windowLength)
+    }
+    if (sprite.xCenter + sprite.spriteWidth / 2.0 > windowWidth) {
+        sprite.xCenter = windowWidth - sprite.spriteWidth / 2.0;
+        pointInDirection(sprite, -sprite.direction);
+    }
+    if (sprite.yCenter - sprite.spriteHeight / 2.0 < 0) {
+        sprite.yCenter = sprite.spriteHeight / 2.0;
         pointInDirection(sprite, 180 - sprite.direction);
+    }
+    if (sprite.yCenter + sprite.spriteHeight / 2.0 > windowLength) {
+        sprite.yCenter = windowLength - sprite.spriteHeight / 2.0;
+        pointInDirection(sprite, 180 - sprite.direction);
+    }
 }

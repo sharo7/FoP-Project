@@ -1,5 +1,6 @@
 #ifndef SPRITE_H
 #define SPRITE_H
+
 #include <bits/stdc++.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -19,5 +20,7 @@ struct Sprite {
 };
 
 void correctDirRange(Sprite &sprite); //valid range for the angle is -180 to 180 degrees
+
 Sprite createSprite(SDL_Texture *texture, int windowWidth, int windowLength);
+
 #endif //SPRITE_H

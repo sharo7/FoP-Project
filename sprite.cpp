@@ -3,7 +3,7 @@
 void correctDirRange(Sprite &sprite) {
     while (sprite.direction > 180)
         sprite.direction -= 360;
-    while (sprite.direction < -180)
+    while (sprite.direction <= -180)
         sprite.direction += 360;
 }
 
