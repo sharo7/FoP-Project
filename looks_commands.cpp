@@ -43,3 +43,62 @@ void changeSizeBy(Sprite &sprite, double scalePercentage)
     if (sprite.spriteSize<0)
         sprite.spriteSize=0;
 }
+void clearGraphicEffects(Sprite &sprite)
+{
+    sprite.graphicEffectEnabled=false;
+}
+void setColorEffectTo(Sprite &sprite, double value)
+{
+    sprite.graphicEffectEnabled=true;
+    sprite.colorEffect=value;
+}
+void changeColorEffectBy(Sprite &sprite, double value)
+{
+    sprite.graphicEffectEnabled=true;
+    sprite.colorEffect+=value;
+}
+void addBackdrop(Stage &stage, SDL_Texture* backdropTexture, const string& backdropName)
+{
+    stage.backdropTexture.push_back(backdropTexture);
+    stage.backdropName.push_back(backdropName);
+}
+void switchBackdropTo(Stage &stage, const string backdropName)
+{
+    for (int i=0; i<stage.backdropTexture.size(); i++)
+        if (stage.backdropName[i]==backdropName)
+        {
+            stage.currentBackdropIndex=i;
+            return;
+        }
+}
+void nextBackdrop(Stage &stage)
+{
+    if (stage.backdropTexture.empty())
+        return;
+    stage.currentBackdropIndex++;
+
+    if (stage.currentBackdropIndex==stage.backdropTexture.size())
+        stage.currentBackdropIndex=0;
+}
+int costumeNumber(const Sprite &sprite)
+{
+    return sprite.currentCostumeIndex+1;
+}
+string costumeName(const Sprite &sprite)
+{
+    return sprite.spriteCostumes[sprite.currentCostumeIndex].costumeName;
+}
+int backdropNumber(const Stage &stage)
+{
+    return stage.currentBackdropIndex+1;// if no backdrop is selected the output would be 0
+}
+string backdropName(const Stage &stage)
+{
+    if (stage.backdropTexture.empty())
+        return "";
+    return stage.backdropName[stage.currentBackdropIndex];
+}
+double size(const Sprite &sprite)
+{
+    return sprite.spriteSize;
+}

@@ -54,4 +54,8 @@ void freeAllSounds(Sprite& sprite)
         Mix_FreeChunk(sound.second);
     sprite.spriteSounds.clear();
 }
+void soundInitializer()
+{
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+}
 
