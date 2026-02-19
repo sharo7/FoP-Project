@@ -13,6 +13,8 @@ add_executable(Scratch main.cpp
         sound_commands.h
         sound_commands.cpp
         variables.h
-        variables.cpp)
+        variables.cpp
+        sensing_commands.h
+        sensing_commands.cpp)
 
 target_link_libraries(${PROJECT_NAME} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer)

@@ -22,8 +22,8 @@ void pointInDirection(Sprite &sprite, double theta)
 }
 void goToXY(Sprite &sprite, double x, double y)
 {
-    sprite.xCenter=x;
-    sprite.yCenter=y;
+    sprite.xCenter=x+gameArea.x;
+    sprite.yCenter=y+gameArea.y;
 }
 void changeXBy(Sprite &sprite, double dx)
 {
@@ -41,18 +41,18 @@ void goToMousePointer(Sprite &sprite)
     sprite.xCenter=xMouse;
     sprite.yCenter=yMouse;
 }
-void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength)
+void goToRandomPosition(Sprite &sprite)
 {
     static mt19937 gen(time(nullptr));
-    uniform_real_distribution<> x(sprite.costumeWidth/2.0, windowWidth-sprite.costumeWidth/2.0);
-    uniform_real_distribution<> y(sprite.costumeHeight/2.0, windowLength-sprite.costumeHeight/2.0);
+    uniform_real_distribution<> x(gameArea.x, gameArea.x+gameArea.w);
+    uniform_real_distribution<> y(gameArea.y, gameArea.y+gameArea.h);
     sprite.xCenter=x(gen);
     sprite.yCenter=y(gen);
 }
-void ifOnEdgeBounce(Sprite &sprite, int windowWidth, int windowLength)
+void ifOnEdgeBounce(Sprite &sprite)
 {
-    if (sprite.xCenter-sprite.costumeWidth/2.0<0||sprite.xCenter+sprite.costumeWidth/2.0>windowWidth)
+    if (sprite.xCenter-sprite.costumeWidth/2.0<gameArea.x||sprite.xCenter+sprite.costumeWidth/2.0>gameArea.x+gameArea.w)
         pointInDirection(sprite, -sprite.direction);
-    if (sprite.yCenter-sprite.costumeHeight/2.0<0||sprite.yCenter+sprite.costumeHeight/2.0>windowLength)
+    if (sprite.yCenter-sprite.costumeHeight/2.0<gameArea.y||sprite.yCenter+sprite.costumeHeight/2.0>gameArea.y+gameArea.h)
         pointInDirection(sprite, 180-sprite.direction);
 }

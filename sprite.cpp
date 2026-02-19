@@ -1,4 +1,11 @@
 #include "sprite.h"
+void setGameArea(int x, int y, int w, int h)
+{
+    gameArea.x=x;
+    gameArea.y=y;
+    gameArea.w=w;
+    gameArea.h=h;
+}
 void correctDirRange(Sprite& sprite)
 {
     while (sprite.direction>180)
@@ -77,9 +84,12 @@ void drawSprite(SDL_Renderer* renderer, Sprite &sprite,
         SDL_RenderCopy(renderer, sprite.textTexture, nullptr, &dstText);
     }
 }
-void setUpStage(Stage &stage, int x, int y, int w, int h)
+void setUpStage(Stage &stage)
 {
-    stage.stageRect={x, y, w, h};
+    stage.stageRect.x=gameArea.x;
+    stage.stageRect.y=gameArea.y;
+    stage.stageRect.w=gameArea.w;
+    stage.stageRect.w=gameArea.h;
     stage.currentBackdropIndex=-1;// this means that no backdrop is being selected at first
 }
 void drawStage(SDL_Renderer* renderer, const Stage &stage)
