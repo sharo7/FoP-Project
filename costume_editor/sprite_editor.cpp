@@ -47,6 +47,8 @@ const int SLIDER_GREEN_UI_ID=1;
 const int SLIDER_BLUE_UI_ID=2;
 const int File_Input_UI_ID=3;
 const int File_Load_UI_ID=4;
+const int Sprite_Verical_Inverter=5;
+const int Sprite_Horizontal_Inverter=5;
 
 struct UI_State
 {
@@ -127,6 +129,11 @@ void Fill_Bucket(Canvas& canvas, int x_start, int y_start, Color new_color)
                         pixel_check_list.push_back({point.x -1, point.y});
                         pixel_check_list.push_back({point.x, point.y +1});
                         pixel_check_list.push_back({point.x, point.y -1});
+                        pixel_check_list.push_back({point.x +1, point.y+1});
+                        pixel_check_list.push_back({point.x -1, point.y+1});
+                        pixel_check_list.push_back({point.x+1, point.y -1});
+                        pixel_check_list.push_back({point.x-1, point.y -1});
+
                     }
                 }
             }
@@ -460,6 +467,8 @@ int main(int argc, char* argv[])
     SDL_Rect File_Name_Inputer = {20,330,200,30};
     SDL_Rect Load_File_Button = {20,370,200,30};
     SDL_Rect Save_File_Button = {20,410,200,30};
+    SDL_Rect Horizontal_Invert_Button = {20,450,90,30};
+    SDL_Rect Vertical_Invert_Button = {130,450,90,30};
 
 
     bool Is_Running = true;
@@ -637,6 +646,22 @@ int main(int argc, char* argv[])
                                 cout<<"Cannot save file"<<state.UI.filename.c_str()<<endl;
                             }
                         }
+                        state.UI.mouse_pressed_on_ui = true;
+                    }
+                    else if (SDL_PointInRect(&mouse_point,&Vertical_Invert_Button))
+                    {
+                        for (int i=0;i<canvas_height;i++)
+                            for (int j=0;j<canvas_width/2;j++)
+                                swap(state.canvas.Canvas_Pixels[i][j],state.canvas.Canvas_Pixels[i][canvas_width-1-j]);
+
+                        state.UI.mouse_pressed_on_ui = true;
+                    }
+                    else if (SDL_PointInRect(&mouse_point,&Horizontal_Invert_Button))
+                    {
+                        for (int i=0;i<canvas_height/2;i++)
+                            for (int j=0;j<canvas_width;j++)
+                                swap(state.canvas.Canvas_Pixels[i][j],state.canvas.Canvas_Pixels[canvas_height-1-i][j]);
+
                         state.UI.mouse_pressed_on_ui = true;
                     }
                     else
@@ -826,6 +851,26 @@ int main(int argc, char* argv[])
             text_render(renderer,state.font,"Save",Save_File_Button.x+Save_File_Button.w/2,Save_File_Button.y+Save_File_Button.h/2,text_color,true);
         }
 
+        SDL_SetRenderDrawColor(renderer,200,200,200,255);
+        SDL_RenderFillRect(renderer,&Vertical_Invert_Button);
+        SDL_SetRenderDrawColor(renderer,0,0,0,255);
+        SDL_RenderDrawRect(renderer,&Vertical_Invert_Button);
+        if (state.font)
+        {
+            SDL_Color text_color = {0,0,0,255};
+            text_render(renderer,state.font,"Vertical",Vertical_Invert_Button.x+Vertical_Invert_Button.w/2,Vertical_Invert_Button.y+Vertical_Invert_Button.h/2,text_color,true);
+        }
+
+        SDL_SetRenderDrawColor(renderer,200,200,200,255);
+        SDL_RenderFillRect(renderer,&Horizontal_Invert_Button);
+        SDL_SetRenderDrawColor(renderer,0,0,0,255);
+        SDL_RenderDrawRect(renderer,&Horizontal_Invert_Button);
+        if (state.font)
+        {
+            SDL_Color text_color = {0,0,0,255};
+            text_render(renderer,state.font,"Horizontal",Horizontal_Invert_Button.x+Horizontal_Invert_Button.w/2,Horizontal_Invert_Button.y+Horizontal_Invert_Button.h/2,text_color,true);
+        }
+
         SDL_Rect desktop = {Left_toolbar_width,0,canvas_width*scaler,canvas_height*scaler};
         SDL_RenderCopy(renderer,texture,NULL,&desktop);
 
@@ -845,24 +890,3 @@ int main(int argc, char* argv[])
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
