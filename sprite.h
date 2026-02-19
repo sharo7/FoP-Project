@@ -5,6 +5,9 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 using namespace std;
+extern SDL_Rect gameArea;// this is the area where the sprite can move in
+void setGameArea(int x, int y, int w, int h);// this function should first be called in main to get the needed
+//values of the game area
 struct Stage
 {
     SDL_Rect stageRect; //this is the rectangle that the sprite lives on
@@ -43,7 +46,7 @@ void correctDirRange(Sprite& sprite);//valid range for the angle is -180 to 180 
 Sprite createSprite(SDL_Texture* costumeTexture, const string &costumeName, int windowWidth, int windowLength);
 void drawSprite(SDL_Renderer* renderer, Sprite &sprite,
     SDL_Texture* sayBubbleTexture, SDL_Texture* thinkBubbleTexture);
-void setUpStage(Stage &stage, int x, int y, int w, int h);//this function should be called at the first of the
+void setUpStage(Stage &stage);//this function should be called at the first of the
 //program to save the information of the stage that the sprite performs on
 void drawStage(SDL_Renderer* renderer, const Stage &stage);
 #endif //SPRITE_H

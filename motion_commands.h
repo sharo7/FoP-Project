@@ -9,6 +9,6 @@ void goToXY(Sprite &sprite, double x, double y);
 void changeXBy(Sprite &sprite, double dx);
 void changeYBy(Sprite &sprite, double dy);
 void goToMousePointer(Sprite &sprite);
-void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength);
-void ifOnEdgeBounce(Sprite &sprite, int windowWidth, int windowLength);
+void goToRandomPosition(Sprite &sprite);
+void ifOnEdgeBounce(Sprite &sprite);
 #endif //MOTION_COMMANDS_H
