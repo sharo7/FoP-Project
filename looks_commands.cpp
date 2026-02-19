@@ -102,3 +102,75 @@ double size(const Sprite &sprite)
 {
     return sprite.spriteSize;
 }
+void say(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font)
+{
+    sprite.saying=true;
+    if (sprite.textTexture!=nullptr)
+    {
+        SDL_DestroyTexture(sprite.textTexture);
+        sprite.textTexture=nullptr;
+    }
+    SDL_Surface* textSurface=TTF_RenderText_Blended(font, text.c_str(), {0, 0, 0, 255});
+    sprite.textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
+    sprite.textRect.w=textSurface->w;
+    sprite.textRect.h=textSurface->h;
+    SDL_FreeSurface(textSurface);
+    sprite.bubbleRect.w=sprite.textRect.w+20;
+    sprite.bubbleRect.h=sprite.textRect.h+20;
+    //the bubbleRect should be slightly be larger than the textRect so the text can fit in the bubble
+    sprite.bubbleEnabledTime=-1;
+}
+void think(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font)
+{
+    sprite.thinking=true;
+    if (sprite.textTexture!=nullptr)
+    {
+        SDL_DestroyTexture(sprite.textTexture);
+        sprite.textTexture=nullptr;
+    }
+    SDL_Surface* textSurface=TTF_RenderText_Blended(font, text.c_str(), {0, 0, 0, 255});
+    sprite.textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
+    sprite.textRect.w=textSurface->w;
+    sprite.textRect.h=textSurface->h;
+    SDL_FreeSurface(textSurface);
+    sprite.bubbleRect.w=sprite.textRect.w+20;
+    sprite.bubbleRect.h=sprite.textRect.h+20;
+    //the bubbleRect should be slightly be larger than the textRect so the text can fit in the bubble
+    sprite.bubbleEnabledTime=-1;
+}
+void sayForSeconds(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font, double time)
+{
+    sprite.saying=true;
+    if (sprite.textTexture!=nullptr)
+    {
+        SDL_DestroyTexture(sprite.textTexture);
+        sprite.textTexture=nullptr;
+    }
+    SDL_Surface* textSurface=TTF_RenderText_Blended(font, text.c_str(), {0, 0, 0, 255});
+    sprite.textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
+    sprite.textRect.w=textSurface->w;
+    sprite.textRect.h=textSurface->h;
+    SDL_FreeSurface(textSurface);
+    sprite.bubbleRect.w=sprite.textRect.w+20;
+    sprite.bubbleRect.h=sprite.textRect.h+20;
+    //the bubbleRect should be slightly be larger than the textRect so the text can fit in the bubble
+    sprite.bubbleEnabledTime=static_cast<Uint32>(time * 1000)+SDL_GetTicks();
+}
+void thinkForSeconds(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font, double time)
+{
+    sprite.thinking=true;
+    if (sprite.textTexture!=nullptr)
+    {
+        SDL_DestroyTexture(sprite.textTexture);
+        sprite.textTexture=nullptr;
+    }
+    SDL_Surface* textSurface=TTF_RenderText_Blended(font, text.c_str(), {0, 0, 0, 255});
+    sprite.textTexture=SDL_CreateTextureFromSurface(renderer, textSurface);
+    sprite.textRect.w=textSurface->w;
+    sprite.textRect.h=textSurface->h;
+    SDL_FreeSurface(textSurface);
+    sprite.bubbleRect.w=sprite.textRect.w+20;
+    sprite.bubbleRect.h=sprite.textRect.h+20;
+    //the bubbleRect should be slightly be larger than the textRect so the text can fit in the bubble
+    sprite.bubbleEnabledTime=static_cast<Uint32>(time * 1000)+SDL_GetTicks();
+}

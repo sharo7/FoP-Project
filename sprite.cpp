@@ -24,7 +24,8 @@ Sprite createSprite(SDL_Texture* costumeTexture, const string &costumeName, int 
     sprite.saying=false;
     return sprite;
 }
-void drawSprite(SDL_Renderer* renderer, const Sprite &sprite)
+void drawSprite(SDL_Renderer* renderer, Sprite &sprite,
+    SDL_Texture* sayBubbleTexture, SDL_Texture* thinkBubbleTexture)
 {
     if (sprite.visible==false)
         return;
@@ -47,6 +48,33 @@ void drawSprite(SDL_Renderer* renderer, const Sprite &sprite)
         SDL_SetRenderDrawColor(renderer, r, g, b, 100);
         SDL_RenderFillRect(renderer, &spriteRect);
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+    }
+    if (SDL_GetTicks()>sprite.bubbleEnabledTime&&sprite.bubbleEnabledTime>0)
+    {
+        sprite.saying=false;
+        sprite.thinking=false;
+        sprite.bubbleEnabledTime=0;
+
+    }
+    SDL_Texture* bubble=nullptr;
+    if (sprite.saying)
+        bubble=sayBubbleTexture;
+    if (sprite.thinking)
+        bubble=thinkBubbleTexture;
+    if (bubble!=nullptr)
+    {
+        SDL_Rect dstBubble;
+        dstBubble.w=sprite.bubbleRect.w;
+        dstBubble.h=sprite.bubbleRect.h;
+        dstBubble.x=sprite.xCenter+sprite.costumeWidth/2.0;
+        dstBubble.y=sprite.yCenter-sprite.costumeHeight/2.0-dstBubble.h;
+        SDL_Rect dstText;
+        dstText.w=sprite.textRect.w;
+        dstText.h=sprite.textRect.h;
+        dstText.x=sprite.xCenter+sprite.costumeWidth/2.0+10;
+        dstText.y=sprite.yCenter-sprite.costumeHeight/2.0-dstBubble.h+10;
+        SDL_RenderCopy(renderer, bubble, nullptr, &dstBubble);
+        SDL_RenderCopy(renderer, sprite.textTexture, nullptr, &dstText);
     }
 }
 void setUpStage(Stage &stage, int x, int y, int w, int h)

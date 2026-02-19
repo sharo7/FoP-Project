@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 using namespace std;
 struct Stage
 {
@@ -30,13 +31,18 @@ struct Sprite
     double colorEffect;//this number decides the change of color on the sprite
     bool thinking;
     bool saying;
+    SDL_Texture* textTexture;
+    SDL_Rect textRect;
+    SDL_Rect bubbleRect;
+    Uint32 bubbleEnabledTime;//-1 means it is on forever
     map<string, Mix_Chunk*> spriteSounds;
 
 };
 
 void correctDirRange(Sprite& sprite);//valid range for the angle is -180 to 180 degrees
-Sprite createSprite(SDL_Texture* texture, int windowWidth, int windowLength);
-void drawSprite(SDL_Renderer* renderer, const Sprite &sprite);
+Sprite createSprite(SDL_Texture* costumeTexture, const string &costumeName, int windowWidth, int windowLength);
+void drawSprite(SDL_Renderer* renderer, Sprite &sprite,
+    SDL_Texture* sayBubbleTexture, SDL_Texture* thinkBubbleTexture);
 void setUpStage(Stage &stage, int x, int y, int w, int h);//this function should be called at the first of the
 //program to save the information of the stage that the sprite performs on
 void drawStage(SDL_Renderer* renderer, const Stage &stage);

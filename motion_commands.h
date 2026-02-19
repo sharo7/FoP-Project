@@ -8,7 +8,7 @@ void pointInDirection(Sprite &sprite, double theta);
 void goToXY(Sprite &sprite, double x, double y);
 void changeXBy(Sprite &sprite, double dx);
 void changeYBy(Sprite &sprite, double dy);
-void goToMousePointer(Sprite &sprite, int xMouse, int yMouse);
+void goToMousePointer(Sprite &sprite);
 void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength);
 void ifOnEdgeBounce(Sprite &sprite, int windowWidth, int windowLength);
 #endif //MOTION_COMMANDS_H

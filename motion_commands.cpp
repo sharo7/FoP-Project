@@ -33,8 +33,11 @@ void changeYBy(Sprite &sprite, double dy)
 {
     sprite.yCenter+=dy;
 }
-void goToMousePointer(Sprite &sprite, int xMouse, int yMouse)
+void goToMousePointer(Sprite &sprite)
 {
+    int xMouse;
+    int yMouse;
+    SDL_GetMouseState(&xMouse, &yMouse);
     sprite.xCenter=xMouse;
     sprite.yCenter=yMouse;
 }

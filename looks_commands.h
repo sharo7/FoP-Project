@@ -19,4 +19,8 @@ string costumeName(const Sprite &sprite);
 int backdropNumber(const Stage &stage);
 string backdropName(const Stage &stage);
 double size(const Sprite &sprite);
+void say(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font);
+void think(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font);
+void sayForSeconds(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font, double time);
+void thinkForSeconds(Sprite &sprite, const string &text, SDL_Renderer* renderer, TTF_Font* font, double time);
 #endif //LOOKS_COMMANDS_H
