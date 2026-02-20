@@ -28,4 +28,5 @@ bool keyPressed(const string &keyName);
 // this function supports space, enter, arrows, all letters and numbers and any key
 //that means it returns true if any key has been pressed
 void setDragMode(Sprite &sprite, bool draggable);
+
 #endif //SENSING_COMMANDS_H
