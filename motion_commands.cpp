@@ -1,58 +1,69 @@
 #include "motion_commands.h"
 
-void move(Sprite &sprite, double n)
+void move(Sprite& sprite, double n)
 {
-    sprite.xCenter+=n*cos(sprite.direction*M_PI/180);
-    sprite.yCenter-=n*sin(sprite.direction*M_PI/180);
+    sprite.xCenter += n * cos(sprite.direction * M_PI / 180);
+    sprite.yCenter -= n * sin(sprite.direction * M_PI / 180);
 }
-void turnAnticlockwise(Sprite &sprite, double theta)
+
+void turnAnticlockwise(Sprite& sprite, double theta)
 {
-    sprite.direction+=theta;
+    sprite.direction += theta;
     correctDirRange(sprite);
 }
-void turnClockwise(Sprite &sprite, double theta)
+
+void turnClockwise(Sprite& sprite, double theta)
 {
-    sprite.direction-=theta;
+    sprite.direction -= theta;
     correctDirRange(sprite);
 }
-void pointInDirection(Sprite &sprite, double theta)
+
+void pointInDirection(Sprite& sprite, double theta)
 {
-    sprite.direction=theta;
+    sprite.direction = theta;
     correctDirRange(sprite);
 }
-void goToXY(Sprite &sprite, double x, double y)
+
+void goToXY(Sprite& sprite, double x, double y)
 {
-    sprite.xCenter=x+gameArea.x;
-    sprite.yCenter=y+gameArea.y;
+    sprite.xCenter = x + gameArea.x;
+    sprite.yCenter = y + gameArea.y;
 }
-void changeXBy(Sprite &sprite, double dx)
+
+void changeXBy(Sprite& sprite, double dx)
 {
-    sprite.xCenter+=dx;
+    sprite.xCenter += dx;
 }
-void changeYBy(Sprite &sprite, double dy)
+
+void changeYBy(Sprite& sprite, double dy)
 {
-    sprite.yCenter+=dy;
+    sprite.yCenter += dy;
 }
-void goToMousePointer(Sprite &sprite)
+
+void goToMousePointer(Sprite& sprite)
 {
     int xMouse;
     int yMouse;
     SDL_GetMouseState(&xMouse, &yMouse);
-    sprite.xCenter=xMouse;
-    sprite.yCenter=yMouse;
+    sprite.xCenter = xMouse;
+    sprite.yCenter = yMouse;
 }
-void goToRandomPosition(Sprite &sprite)
+
+void goToRandomPosition(Sprite& sprite)
 {
     static mt19937 gen(time(nullptr));
-    uniform_real_distribution<> x(gameArea.x, gameArea.x+gameArea.w);
-    uniform_real_distribution<> y(gameArea.y, gameArea.y+gameArea.h);
-    sprite.xCenter=x(gen);
-    sprite.yCenter=y(gen);
+    uniform_real_distribution<> x(gameArea.x, gameArea.x + gameArea.w);
+    uniform_real_distribution<> y(gameArea.y, gameArea.y + gameArea.h);
+    sprite.xCenter = x(gen);
+    sprite.yCenter = y(gen);
 }
-void ifOnEdgeBounce(Sprite &sprite)
+
+void ifOnEdgeBounce(Sprite& sprite)
 {
-    if (sprite.xCenter-sprite.costumeWidth/2.0<gameArea.x||sprite.xCenter+sprite.costumeWidth/2.0>gameArea.x+gameArea.w)
+    if (sprite.xCenter - sprite.costumeWidth / 2.0 < gameArea.x || sprite.xCenter + sprite.costumeWidth / 2.0 > gameArea
+        .x + gameArea.w)
         pointInDirection(sprite, -sprite.direction);
-    if (sprite.yCenter-sprite.costumeHeight/2.0<gameArea.y||sprite.yCenter+sprite.costumeHeight/2.0>gameArea.y+gameArea.h)
-        pointInDirection(sprite, 180-sprite.direction);
+    if (sprite.yCenter - sprite.costumeHeight / 2.0 < gameArea.y || sprite.yCenter + sprite.costumeHeight / 2.0 >
+        gameArea.y + gameArea.h)
+        pointInDirection(sprite, 180 - sprite.direction);
 }
