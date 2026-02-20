@@ -1,6 +1,6 @@
 #include "interpreter.h"
 
-// this fuction is built to make the makeIntepreters cleaner.
+// this function is built to make the makeInterpreters cleaner.
 void registerEvent(MultiInterpreter &m, Block *block, EventType type) {
     m.interpreters.emplace_back();
     m.events.emplace_back(Event{type});
@@ -48,29 +48,33 @@ void findSeriesOfBlocks(const vector<Block *> &codeSpace, Interpreter &currentIn
 void makeInterpreters(const vector<Block *> &codeSpace, MultiInterpreter &multiInterpreter) {
     for (Block *block: codeSpace)
         switch (block->type) {
-            case BlockType::WhenGreenFlagClicked:
+            case BlockType::WhenGreenFlagClicked: {
                 registerEvent(multiInterpreter, block, WHEN_GREEN_FLAG_CLICKED);
-                Interpreter &currentInterpreter_1 = *multiInterpreter.interpreters.back();
-                findSeriesOfBlocks(codeSpace, currentInterpreter_1, block);
+                Interpreter &currentInterpreter = *multiInterpreter.interpreters.back();
+                findSeriesOfBlocks(codeSpace, currentInterpreter, block);
                 break;
+            }
 
-            case BlockType::WhenSomeKeyPressed:
+            case BlockType::WhenSomeKeyPressed: {
                 registerEvent(multiInterpreter, block, WHEN_SOME_KEY_PRESSED);
-                Interpreter &currentInterpreter_2 = *multiInterpreter.interpreters.back();
-                findSeriesOfBlocks(codeSpace, currentInterpreter_2, block);
+                Interpreter &currentInterpreter = *multiInterpreter.interpreters.back();
+                findSeriesOfBlocks(codeSpace, currentInterpreter, block);
                 break;
+            }
 
-            case BlockType::WhenThisSpriteClicked:
+            case BlockType::WhenThisSpriteClicked: {
                 registerEvent(multiInterpreter, block, WHEN_THIS_SPRITE_CLICKED);
-                Interpreter &currentInterpreter_3 = *multiInterpreter.interpreters.back();
-                findSeriesOfBlocks(codeSpace, currentInterpreter_3, block);
+                Interpreter &currentInterpreter = *multiInterpreter.interpreters.back();
+                findSeriesOfBlocks(codeSpace, currentInterpreter, block);
                 break;
+            }
 
-            case BlockType::WhenXIsGreaterThanY:
+            case BlockType::WhenXIsGreaterThanY: {
                 registerEvent(multiInterpreter, block, WHEN_X_IS_GREATER_THAN_Y);
-                Interpreter &currentInterpreter_4 = *multiInterpreter.interpreters.back();
-                findSeriesOfBlocks(codeSpace, currentInterpreter_4, block);
+                Interpreter &currentInterpreter = *multiInterpreter.interpreters.back();
+                findSeriesOfBlocks(codeSpace, currentInterpreter, block);
                 break;
+            }
 
             default:
                 break;
@@ -115,21 +119,15 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::GoToMousePointer:
-            goToMousePointer(parent->parameters.at(0).sprVal,
-                             static_cast<int>(parent->parameters.at(1).numVal),
-                             static_cast<int>(parent->parameters.at(2).numVal));
+            goToMousePointer(parent->parameters.at(0).sprVal);
             break;
 
         case BlockType::GoToRandomPosition:
-            goToRandomPosition(parent->parameters.at(0).sprVal,
-                               static_cast<int>(parent->parameters.at(1).numVal),
-                               static_cast<int>(parent->parameters.at(2).numVal));
+            goToRandomPosition(parent->parameters.at(0).sprVal);
             break;
 
         case BlockType::IfOnEdgeBounce:
-            ifOnEdgeBounce(parent->parameters.at(0).sprVal,
-                           static_cast<int>(parent->parameters.at(1).numVal),
-                           static_cast<int>(parent->parameters.at(2).numVal));
+            ifOnEdgeBounce(parent->parameters.at(0).sprVal);
             break;
 
         // Run: looks_commands
@@ -139,6 +137,94 @@ void checkAndRun(Block *parent) {
 
         case BlockType::Hide:
             hide(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::AddCostume:
+            addCostume(parent->parameters.at(0).sprVal, parent->parameters.at(1).txtVal,
+                       parent->parameters.at(2).strVal);
+            break;
+
+        case BlockType::NextCostume:
+            nextCostume(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::SwitchCostumeTo:
+            switchCostumeTo(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal);
+            break;
+
+        case BlockType::SetSizeTo:
+            setSizeTo(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            break;
+
+        case BlockType::ChangeSizeBy:
+            changeSizeBy(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            break;
+
+        case BlockType::ClearGraphicEffects:
+            clearGraphicEffects(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::SetColorEffectTo:
+            setColorEffectTo(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            break;
+
+        case BlockType::ChangeColorEffectBy:
+            changeColorEffectBy(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            break;
+
+        case BlockType::AddBackdrop:
+            addBackdrop(parent->parameters.at(0).stgVal, parent->parameters.at(1).txtVal,
+                        parent->parameters.at(2).strVal);
+            break;
+
+        case BlockType::SwitchBackdropTo:
+            switchBackdropTo(parent->parameters.at(0).stgVal, parent->parameters.at(1).strVal);
+            break;
+
+        case BlockType::NextBackdrop:
+            nextBackdrop(parent->parameters.at(0).stgVal);
+            break;
+
+        case BlockType::CostumeNumber:
+            costumeNumber(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::CostumeName:
+            costumeName(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::BackdropNumber:
+            backdropNumber(parent->parameters.at(0).stgVal);
+            break;
+
+        case BlockType::BackdropName:
+            backdropName(parent->parameters.at(0).stgVal);
+            break;
+
+        case BlockType::Size:
+            size(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::Say:
+            say(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal, parent->parameters.at(2).rndVal,
+                parent->parameters.at(3).fntVal);
+            break;
+
+        case BlockType::Think:
+            think(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal, parent->parameters.at(2).rndVal,
+                  parent->parameters.at(3).fntVal);
+            break;
+
+        case BlockType::SayForSeconds:
+            sayForSeconds(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal,
+                          parent->parameters.at(2).rndVal, parent->parameters.at(3).fntVal,
+                          parent->parameters.at(4).numVal);
+            break;
+
+        case BlockType::ThinkForSeconds:
+            thinkForSeconds(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal,
+                            parent->parameters.at(2).rndVal, parent->parameters.at(3).fntVal,
+                            parent->parameters.at(4).numVal);
             break;
 
         // Run: sound_commands
@@ -179,7 +265,54 @@ void checkAndRun(Block *parent) {
             wait(static_cast<int>(parent->parameters.at(0).numVal));
             break;
 
-        case BlockType::Repeat:
+        // Run: sensing_commands
+        case BlockType::DistanceToSprite:
+            distanceToSprite(parent->parameters.at(0).sprVal, parent->parameters.at(1).sprVal);
+            break;
+
+        case BlockType::DistanceToMouse:
+            distanceToMouse(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::Timer:
+            timer();
+            break;
+
+        case BlockType::ResetTimer:
+            resetTimer();
+            break;
+
+        case BlockType::TouchingMousePointer:
+            touchingMousePointer(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::TouchingSprite:
+            touchingSprite(parent->parameters.at(0).sprVal, parent->parameters.at(1).sprVal);
+            break;
+
+        case BlockType::TouchingEdge:
+            touchingEdge(parent->parameters.at(0).sprVal);
+            break;
+
+        case BlockType::MouseX:
+            mouseX();
+            break;
+
+        case BlockType::MouseY:
+            mouseY();
+            break;
+
+        case BlockType::MouseDown:
+            mouseDown();
+            break;
+
+        case BlockType::KeyPressed:
+            keyPressed(parent->parameters.at(0).strVal);
+            break;
+
+        case BlockType::SetDragMode:
+            setDragMode(parent->parameters.at(0).sprVal, parent->parameters.at(1).boolVal);
+            break;
 
         // Run: operators
         case BlockType::Addition:
@@ -308,13 +441,13 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::GetVariableValue: {
-            if (processValue(variables[parent->parameters.at(0).strVal].value) == 1)
+            if (processValue(variables[parent->parameters.at(0).strVal].value.numVal) == 1)
                 getVariableValue<double>(parent->parameters.at(0).strVal,
                                          static_cast<int>(parent->parameters.at(1).numVal));
-            else if (processValue(variables[parent->parameters.at(0).strVal].value) == 2)
+            else if (processValue(variables[parent->parameters.at(0).strVal].value.numVal) == 2)
                 getVariableValue<string>(parent->parameters.at(0).strVal,
                                          static_cast<int>(parent->parameters.at(1).numVal));
-            else if (processValue(variables[parent->parameters.at(0).strVal].value) == 3)
+            else if (processValue(variables[parent->parameters.at(0).strVal].value.numVal) == 3)
                 getVariableValue<bool>(parent->parameters.at(0).strVal,
                                        static_cast<int>(parent->parameters.at(1).numVal));
             break;

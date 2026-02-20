@@ -17,11 +17,12 @@ void forever();
 
 bool if_then(bool shouldـexecute);
 
-bool waitUntil (bool condition);
+bool waitUntil(bool condition);
 
 void stopAll();
 
 bool if_then_else(bool discriminant);
+
 // if discriminant is true, then the commands the first commands will be executed,
 // otherwise the second commands will be executed.
 

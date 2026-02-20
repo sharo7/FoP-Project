@@ -4,24 +4,29 @@
 #include <bits/stdc++.h>
 #include "sprite.h"
 #include "motion_commands.h"
-#include "sound_commands.h"
 #include "looks_commands.h"
+#include "sound_commands.h"
 #include "events.h"
 #include "control_flow_logic.h"
+#include "sensing_commands.h"
 #include "operators.h"
 #include "variables.h"
 
 using namespace std;
 
 // Dynamic Data Type Support
-enum DataType { NUMBER, STRING, BOOLEAN, SPRITE };
+enum DataType { NUMBER, STRING, BOOLEAN, SPRITE, STAGE, SDL_TEXTURE, SDL_RENDERER, TTF_FONT };
 
 struct Value {
     DataType type;
+    Sprite sprVal;
+    Stage stgVal;
     double numVal;
     string strVal;
     bool boolVal;
-    Sprite sprVal;
+    SDL_Texture *txtVal;
+    SDL_Renderer *rndVal;
+    TTF_Font *fntVal;
 };
 
 struct Variable {
@@ -51,16 +56,23 @@ enum struct BlockType {
     Move, TurnAnticlockwise, TurnClockwise, PointInDirection, GoToXY, ChangeXBy, ChangeYBy, GoToMousePointer,
     GoToRandomPosition, IfOnEdgeBounce,
 
-    //Looks Commands
-    Show, Hide,
-    // events
+    // Looks Commands
+    Show, Hide, AddCostume, NextCostume, SwitchCostumeTo, SetSizeTo, ChangeSizeBy, ClearGraphicEffects,
+    SetColorEffectTo, ChangeColorEffectBy, AddBackdrop, SwitchBackdropTo, NextBackdrop, CostumeNumber, CostumeName,
+    BackdropNumber, BackdropName, Size, Say, Think, SayForSeconds, ThinkForSeconds,
+
+    // Sound Commands
+    AddSound, StartSound, PlaySoundUntilDone, StopAllSounds, SetVolumeTo, ChangeVolumeBy,
+
+    // Events
     WhenGreenFlagClicked, WhenSomeKeyPressed, WhenThisSpriteClicked, WhenXIsGreaterThanY,
 
     // Control Flow Logic
     Wait, Repeat, Forever, If_Then, WaitUntil, StopAll, If_Then_Else, RepeatUntil,
 
-    //Sound Commands
-    AddSound, StartSound, PlaySoundUntilDone, StopAllSounds, SetVolumeTo, ChangeVolumeBy,
+    // Sensing Commands
+    DistanceToSprite, DistanceToMouse, Timer, ResetTimer, TouchingMousePointer, TouchingSprite, TouchingEdge, MouseX,
+    MouseY, MouseDown, KeyPressed, SetDragMode,
 
     //Operators
     Addition, Subtraction, Multiplication, Division, Modulos, IsEqual, IsGreaterThan, IsLessThan, MyAbs, MySqrt,

@@ -19,4 +19,3 @@ bool whenXisGreaterThanY(const Variable &X, double Y) {
         return true;
     return false;
 }
-
