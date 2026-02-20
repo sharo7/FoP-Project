@@ -1,6 +1,5 @@
 #ifndef MOTION_COMMANDS_H
 #define MOTION_COMMANDS_H
-
 #include "sprite.h"
 
 void move(Sprite &sprite, double n); // n is the number of pixels
@@ -17,10 +16,10 @@ void changeXBy(Sprite &sprite, double dx);
 
 void changeYBy(Sprite &sprite, double dy);
 
-void goToMousePointer(Sprite &sprite, int xMouse, int yMouse);
+void goToMousePointer(Sprite &sprite);
 
-void goToRandomPosition(Sprite &sprite, int windowWidth, int windowLength);
+void goToRandomPosition(Sprite &sprite);
 
-void ifOnEdgeBounce(Sprite &sprite, int windowWidth, int windowLength);
+void ifOnEdgeBounce(Sprite &sprite);
 
 #endif //MOTION_COMMANDS_H

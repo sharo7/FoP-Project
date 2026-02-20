@@ -12,12 +12,14 @@ add_executable(Scratch main.cpp
         looks_commands.cpp
         sound_commands.h
         sound_commands.cpp
-        variables.h
-        variables.cpp
-        operators.h
-        operators.cpp
         control_flow_logic.cpp
         control_flow_logic.h
+        sensing_commands.h
+        sensing_commands.cpp
+        operators.h
+        operators.cpp
+        variables.h
+        variables.cpp
         interpreter.h
         interpreter.cpp)
 
