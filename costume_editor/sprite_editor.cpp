@@ -28,8 +28,8 @@ const Color CYAN = {0,255,255,255};
 const Color MAGENTA = {255,0,255,255};
 const Color YELLOW = {255,255,0,255};
 const Color GRAY = {128,128,128,128};
-
-const Color Default_Canvas_Color = WHITE;
+const Color Transparent = {128,128,128,0};
+const Color Default_Canvas_Color = Transparent;
 
 struct Canvas
 {
@@ -68,6 +68,16 @@ struct App_State
     Point starting_point;
     UI_State UI;
     TTF_Font *font;
+
+    bool Is_in_placing_mode =false;
+    Canvas hold_image;
+    int pixels_x_to_move = 0;
+    int pixels_y_to_move = 0;
+    bool waiting_to_move = false;
+    int start_draging_mouse_x,start_draging_mouse_y;
+    int start_dragging_offset_x,start_dragging_offset_y;
+
+    float resize_scale=1.0;
 };
 
 const int Brush_tool_id=0;
@@ -247,17 +257,6 @@ void Draw_Circle(Canvas& canvas, int x_Center_start, int y_Center_start, int rad
 
 }
 
-void Canvas_to_Buffer_Convertor(const Canvas& canvas, Uint32* buffer)
-{
-    for (int y = 0;y < canvas_height ;y++)
-        {
-            for (int x = 0;x < canvas_width;x++)
-            {
-                Color current_pixel = canvas.Canvas_Pixels[y][x];
-                buffer[y*canvas_width+x] = current_pixel.red << 24 | current_pixel.green << 16 | current_pixel.blue << 8 | current_pixel.alpha;
-            }
-        }
-}
 
 Point mouse_position_to_canvas_convertor(int mouse_x, int mouse_y)
 {
@@ -290,16 +289,23 @@ bool Png_Loader_On_Canvas(Canvas& canvas,const char* file_name)
 
     SDL_LockSurface(scaled_surface);
     Uint32* pixels = (Uint32*)scaled_surface->pixels;
+    SDL_PixelFormat* format = scaled_surface->format;
+
     for (int i=0;i<canvas_height;i++)
     {
         for (int j=0;j<canvas_width;j++)
         {
             Uint32 pixel = pixels[i*canvas_width+j];
-            Uint8 red = (pixel >> 24) & 0b11111111;
-            Uint8 green = (pixel >> 16) & 0b11111111;
-            Uint8 blue = (pixel >> 8) & 0b11111111;
-            Uint8 alpha = pixel & 0b11111111;
-            canvas.Canvas_Pixels[i][j]={red,green,blue,alpha};
+            Uint8 red;
+            Uint8 green;
+            Uint8 blue;
+            Uint8 alpha;
+            SDL_GetRGBA(pixel,format,&red,&green,&blue,&alpha);
+            if (alpha==0)
+            {
+                continue;
+            }
+            else canvas.Canvas_Pixels[i][j]={red,green,blue,alpha};
         }
     }
     SDL_UnlockSurface(scaled_surface);
@@ -320,12 +326,14 @@ bool Png_Saver_From_Canvas(Canvas& canvas,const char* file_name)
 
     SDL_LockSurface(surface);
     Uint32* pixels = (Uint32*)surface->pixels;
+    SDL_PixelFormat* format = surface->format;
+
     for (int i=0;i<canvas_height;i++)
     {
         for (int j=0;j<canvas_width;j++)
         {
             Color current_pixel = canvas.Canvas_Pixels[i][j];
-            pixels[i*canvas_width+j] = current_pixel.red<<24 | current_pixel.green<<16 | current_pixel.blue<<8 | current_pixel.alpha;
+            pixels[i*canvas_width+j] = SDL_MapRGBA(format,current_pixel.red,current_pixel.green,current_pixel.blue,current_pixel.alpha);
         }
     }
     SDL_UnlockSurface(surface);
@@ -415,6 +423,8 @@ int main(int argc, char* argv[])
         SDL_Quit();
         return 1;
     }
+
+    SDL_PixelFormat* RGBA_Format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
 
     TTF_Font* font = TTF_OpenFont("./Fonts/arial.ttf",16);
     if (!font)
@@ -528,13 +538,50 @@ int main(int argc, char* argv[])
                     break;
                 }
 
-                if (state.UI.Is_text_input_Active)
+                if (state.Is_in_placing_mode == true)
                 {
                     if (event.key.keysym.sym == SDLK_RETURN)
                     {
-                        state.UI.Is_text_input_Active = false;
+                        for (int i=0;i<canvas_height;i++)
+                            for (int j=0;j<canvas_width;j++)
+                            {
+                                float source_y = (i - state.pixels_y_to_move) / state.resize_scale;
+                                float source_x = (j - state.pixels_x_to_move) / state.resize_scale;
+
+                                int source_x_int = int(source_x);
+                                int source_y_int = int(source_y);
+
+
+                                if (source_x_int >= 0 && source_x_int < canvas_width && source_y_int >= 0 && source_y_int < canvas_height)
+                                {
+                                    Color Current_pixel = state.hold_image.Canvas_Pixels[source_y_int][source_x_int];
+                                    if (Current_pixel.alpha!=0)
+                                    {
+                                        state.canvas.Canvas_Pixels[i][j] = Current_pixel;
+                                    }
+                                }
+                            }
+
+                        state.Is_in_placing_mode = false;
+                        state.resize_scale=1.0;
                     }
-                    else if (event.key.keysym.sym == SDLK_BACKSPACE)
+                    else if (event.key.keysym.sym == SDLK_ESCAPE) state.Is_in_placing_mode = false;
+                    else if (event.key.keysym.sym == SDLK_UP) state.pixels_y_to_move--;
+                    else if (event.key.keysym.sym == SDLK_DOWN) state.pixels_y_to_move++;
+                    else if (event.key.keysym.sym == SDLK_RIGHT) state.pixels_x_to_move++;
+                    else if (event.key.keysym.sym == SDLK_LEFT) state.pixels_x_to_move--;
+
+                    if (event.key.keysym.sym == SDLK_PLUS || event.key.keysym.sym == SDLK_EQUALS)
+                        state.resize_scale=state.resize_scale+0.1;
+                    else if (event.key.keysym.sym == SDLK_MINUS)
+                        state.resize_scale=state.resize_scale-0.1;
+                        if (state.resize_scale<0.1) state.resize_scale=0.1;
+
+                }
+
+                if (state.UI.Is_text_input_Active)
+                {
+                    if (event.key.keysym.sym == SDLK_BACKSPACE)
                     {
                         if (!state.UI.filename.empty())
                         {
@@ -543,6 +590,21 @@ int main(int argc, char* argv[])
                     }
                     else if (event.key.keysym.sym == SDLK_ESCAPE)
                     {
+                        state.UI.Is_text_input_Active = false;
+                    }
+                    else if (event.key.keysym.sym == SDLK_RETURN)
+                    {
+                        if (!Png_Loader_On_Canvas(state.hold_image, state.UI.filename.c_str()))
+                        {
+                            cout<<"Cannot load file"<<state.UI.filename.c_str()<<endl;
+                        }
+                        else
+                        {
+                            state.Is_in_placing_mode = true;
+                            state.current_Active_tool=NONE_UI_ID;
+                            state.pixels_x_to_move = 0;
+                            state.pixels_x_to_move = 0;
+                        }
                         state.UI.Is_text_input_Active = false;
                     }
                 }
@@ -630,8 +692,24 @@ int main(int argc, char* argv[])
                     {
                         if (!state.UI.filename.empty())
                         {
-                            if (!Png_Loader_On_Canvas(state.canvas,state.UI.filename.c_str())) {
+                            for (int i=0;i<canvas_height;i++)
+                            {
+                                for (int j=0;j<canvas_width;j++)
+                                {
+                                    state.hold_image.Canvas_Pixels[i][j] = Default_Canvas_Color;
+                                }
+                            }
+
+                            if (!Png_Loader_On_Canvas(state.hold_image, state.UI.filename.c_str()))
+                            {
                                 cout<<"Cannot load file"<<state.UI.filename.c_str()<<endl;
+                            }
+                            else
+                            {
+                                state.Is_in_placing_mode = true;
+                                state.current_Active_tool=NONE_UI_ID;
+                                state.pixels_x_to_move = 0;
+                                state.pixels_x_to_move = 0;
                             }
                         }
 
@@ -675,6 +753,10 @@ int main(int argc, char* argv[])
                     if (canvas_point.x >= 0 && canvas_point.y >= 0)
                     {
                         state.mouse_pressed_on_canvas = true;
+                    }
+                    if (canvas_point.x >= 0 && canvas_point.y >= 0)
+                    {
+                        state.mouse_pressed_on_canvas = true;
                         state.starting_point=canvas_point;
 
                         if (state.current_Active_tool == Brush_tool_id)
@@ -689,7 +771,17 @@ int main(int argc, char* argv[])
             }
             else if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
             {
-                if (state.mouse_pressed_on_canvas == true)
+                if (state.Is_in_placing_mode == true && state.mouse_pressed_on_canvas == true)
+                {
+                    state.current_Active_tool=NONE_UI_ID;
+                    state.waiting_to_move = true;
+                    state.start_draging_mouse_x = event.button.x;
+                    state.start_draging_mouse_y = event.button.y;
+                    state.start_dragging_offset_x = state.pixels_x_to_move;
+                    state.start_dragging_offset_y = state.pixels_y_to_move;
+
+                }
+                else if (state.mouse_pressed_on_canvas == true)
                 {
                     Point mouse_end_point = mouse_position_to_canvas_convertor(event.button.x,event.button.y);
                     if (mouse_end_point.x >= 0 && mouse_end_point.y >= 0)
@@ -720,8 +812,15 @@ int main(int argc, char* argv[])
             {
                 int mouse_x = event.motion.x;
                 int mouse_y = event.motion.y;
+                if (state.Is_in_placing_mode == true && state.waiting_to_move == true && state.mouse_pressed_on_canvas == true && (event.motion.state & SDL_BUTTON_LMASK))
+                {
+                    int Dx=(mouse_x - state.start_draging_mouse_x) /scaler;
+                    int Dy=(mouse_y - state.start_draging_mouse_y) /scaler;
+                    state.pixels_x_to_move = state.start_dragging_offset_x + Dx;
+                    state.pixels_y_to_move = state.start_dragging_offset_y + Dy;
 
-                if (state.UI.active_element >= SLIDER_RED_UI_ID && state.UI.active_element <= SLIDER_BLUE_UI_ID)
+                }
+                else if (state.UI.active_element >= SLIDER_RED_UI_ID && state.UI.active_element <= SLIDER_BLUE_UI_ID)
                 {
                     int slider_x_position = mouse_x;
                     if (slider_x_position < Red_Slider_Rect.x)
@@ -754,7 +853,15 @@ int main(int argc, char* argv[])
         Uint32* Pixels;
         int sdl_locker;
         SDL_LockTexture(texture,NULL,(void**)&Pixels,&sdl_locker);
-        Canvas_to_Buffer_Convertor(state.canvas,Pixels);
+        int number_of_collumns = sdl_locker / sizeof(Uint32);
+        for (int i=0;i<canvas_height;i++)
+        {
+            for (int j=0;j<canvas_width;j++)
+            {
+                Color Current_Pixel = state.canvas.Canvas_Pixels[i][j];
+                Pixels[i*number_of_collumns + j] = SDL_MapRGBA(RGBA_Format,Current_Pixel.red,Current_Pixel.green,Current_Pixel.blue,Current_Pixel.alpha);
+            }
+        }
         SDL_UnlockTexture(texture);
 
         SDL_SetRenderDrawColor(renderer,100,100,100,255);
@@ -874,19 +981,34 @@ int main(int argc, char* argv[])
         SDL_Rect desktop = {Left_toolbar_width,0,canvas_width*scaler,canvas_height*scaler};
         SDL_RenderCopy(renderer,texture,NULL,&desktop);
 
+        if (state.Is_in_placing_mode == true)
+        {
+            for (int i = 0; i < canvas_height; i++)
+                for (int j = 0; j < canvas_width; j++)
+                {
+                    float source_img_y = (i - state.pixels_y_to_move) / state.resize_scale;
+                    float source_img_x = (j - state.pixels_x_to_move) / state.resize_scale;
+
+                    int source_img_y_int = int(source_img_y);
+                    int source_img_x_int = int(source_img_x);
+
+                    if (source_img_y_int >= 0 && source_img_y_int < canvas_height && source_img_x_int >= 0 && source_img_x_int < canvas_width)
+                    {
+                        Color Current_Pixel = state.hold_image.Canvas_Pixels[source_img_y_int][source_img_x_int];
+                        if (Current_Pixel.alpha!=0)
+                        {
+                            SDL_SetRenderDrawColor(renderer,Current_Pixel.red,Current_Pixel.green,Current_Pixel.blue,150);
+                            SDL_Rect pixel = {Left_toolbar_width + j * scaler,i*scaler,1*scaler,1*scaler};
+                            SDL_RenderFillRect(renderer,&pixel);
+                        }
+                    }
+
+                }
+        }
+
+
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
 
     }
-
-
-
-
-
-
-
-
-
-
-
 }
