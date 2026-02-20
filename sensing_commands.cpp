@@ -1,32 +1,27 @@
 #include "sensing_commands.h"
 
-double distanceToSprite(const Sprite& sprite1, const Sprite& sprite2)
-{
+double distanceToSprite(const Sprite &sprite1, const Sprite &sprite2) {
     return sqrt((sprite1.xCenter - sprite2.xCenter) * (sprite1.xCenter - sprite2.xCenter) +
-        (sprite1.yCenter - sprite2.yCenter) * (sprite1.yCenter - sprite2.yCenter));
+                (sprite1.yCenter - sprite2.yCenter) * (sprite1.yCenter - sprite2.yCenter));
 }
 
-double distanceToMouse(const Sprite& sprite)
-{
+double distanceToMouse(const Sprite &sprite) {
     int xMouse;
     int yMouse;
     SDL_GetMouseState(&xMouse, &yMouse);
     return sqrt((sprite.xCenter - xMouse) * (sprite.xCenter - xMouse) +
-        (sprite.yCenter - yMouse) * (sprite.yCenter - yMouse));
+                (sprite.yCenter - yMouse) * (sprite.yCenter - yMouse));
 }
 
-double timer()
-{
+double timer() {
     return (SDL_GetTicks() - resetTime) / 1000.0;
 }
 
-void resetTimer()
-{
+void resetTimer() {
     resetTime = SDL_GetTicks();
 }
 
-bool touchingMousePointer(const Sprite& sprite)
-{
+bool touchingMousePointer(const Sprite &sprite) {
     int xMouse;
     int yMouse;
     SDL_GetMouseState(&xMouse, &yMouse);
@@ -38,8 +33,7 @@ bool touchingMousePointer(const Sprite& sprite)
     return touching;
 }
 
-bool touchingSprite(const Sprite& sprite1, const Sprite& sprite2)
-{
+bool touchingSprite(const Sprite &sprite1, const Sprite &sprite2) {
     SDL_Rect sprite1Rect;
     SDL_Rect sprite2Rect;
     sprite1Rect.x = sprite1.xCenter - sprite1.costumeWidth / 2.0;
@@ -54,8 +48,7 @@ bool touchingSprite(const Sprite& sprite1, const Sprite& sprite2)
     return touching;
 }
 
-bool touchingEdge(const Sprite& sprite)
-{
+bool touchingEdge(const Sprite &sprite) {
     if (sprite.xCenter - sprite.costumeWidth / 2.0 <= gameArea.x)
         return true;
     if (sprite.xCenter + sprite.costumeWidth / 2.0 >= gameArea.x + gameArea.w)
@@ -67,39 +60,33 @@ bool touchingEdge(const Sprite& sprite)
     return false;
 }
 
-int mouseX()
-{
+int mouseX() {
     int xMouse;
     SDL_GetMouseState(&xMouse, nullptr);
     return xMouse;
 }
 
-int mouseY()
-{
+int mouseY() {
     int yMouse;
     SDL_GetMouseState(nullptr, &yMouse);
     return yMouse;
 }
 
-bool mouseDown()
-{
+bool mouseDown() {
     if ((SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0)
         return true;
     return false;
 }
 
-bool keyPressed(const string& keyName)
-{
-    const Uint8* keyboardState = SDL_GetKeyboardState(nullptr);
+bool keyPressed(const string &keyName) {
+    const Uint8 *keyboardState = SDL_GetKeyboardState(nullptr);
     SDL_Scancode keyCode = SDL_SCANCODE_UNKNOWN;
-    if (keyName == "any")
-    {
+    if (keyName == "any") {
         for (int i = 0; i < SDL_NUM_SCANCODES; i++)
             if (keyboardState[i] == 1)
                 return true;
         return false;
-    }
-    else if (keyName == "space")
+    } else if (keyName == "space")
         keyCode = SDL_SCANCODE_SPACE;
     else if (keyName == "enter")
         keyCode = SDL_SCANCODE_RETURN;
@@ -127,8 +114,7 @@ bool keyPressed(const string& keyName)
     return false;
 }
 
-void setDragMode(Sprtie& sprite, bool draggable)
-{
+void setDragMode(Sprite &sprite, bool draggable) {
     sprite.draggable = draggable;
     if (!draggable)
         sprite.dragging = false; // handles the situation where the sprite is being dragged and in the middle of it
