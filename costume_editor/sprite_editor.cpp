@@ -1,3 +1,7 @@
+//
+// Created by Mahdi on 2/20/26.
+//
+#include "sprite_editor.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -5,7 +9,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include <algorithm>
+
 
 using namespace std;
 
@@ -367,25 +371,25 @@ void text_render(SDL_Renderer* renderer, TTF_Font* font,const char* text,int x,i
     }
 }
 
-int main(int argc, char* argv[])
+void costume_editor(const char* initialized_image)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         cout << "SDL_Failed: " << SDL_GetError() << endl;
-        return 1;
+        return ;
     }
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
     {
         cout<< "IMG_SDL failed: " << IMG_GetError() << endl;
         SDL_Quit();
-        return 1;
+        return ;
     }
     if (TTF_Init() < 0)
     {
         cout<< "TTF_SDL failed: " << TTF_GetError() << endl;
         IMG_Quit();
         SDL_Quit();
-        return 1;
+        return ;
     }
 
 
@@ -397,7 +401,7 @@ int main(int argc, char* argv[])
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();
-        return 1;
+        return ;
     }
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -409,7 +413,7 @@ int main(int argc, char* argv[])
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();
-        return 1;
+        return ;
     }
 
     SDL_Texture* texture = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_STREAMING,canvas_width,canvas_height);
@@ -421,7 +425,7 @@ int main(int argc, char* argv[])
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();
-        return 1;
+        return ;
     }
 
     SDL_PixelFormat* RGBA_Format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
@@ -439,6 +443,7 @@ int main(int argc, char* argv[])
         for (int j=0;j<canvas_width;j++)
         {
             state.canvas.Canvas_Pixels[i][j]= Default_Canvas_Color;
+            state.hold_image.Canvas_Pixels[i][j]= Default_Canvas_Color;
         }
     }
 
@@ -456,6 +461,42 @@ int main(int argc, char* argv[])
     state.font=font;
 
     SDL_StartTextInput();
+
+
+    if (initialized_image != nullptr)
+    {
+        for (int i=0;i<canvas_height;i++)
+        {
+            for (int j=0;j<canvas_width;j++)
+            {
+                state.hold_image.Canvas_Pixels[i][j]= Default_Canvas_Color;
+            }
+        }
+        if (Png_Loader_On_Canvas(state.hold_image,initialized_image))
+        {
+            state.Is_in_placing_mode = true;
+            state.current_Active_tool = NONE_UI_ID;
+            state.pixels_x_to_move = 0;
+            state.pixels_y_to_move = 0;
+            state.resize_scale = 1.0;
+        }
+        else
+        {
+            cout<<"Failed to load image"<<endl;
+        }
+
+
+    }
+    else
+    {
+        for (int i=0;i<canvas_height;i++)
+        {
+            for (int j=0;j<canvas_width;j++)
+            {
+                state.canvas.Canvas_Pixels[i][j]= Default_Canvas_Color;
+            }
+        }
+    }
 
 
 
@@ -692,6 +733,7 @@ int main(int argc, char* argv[])
                     {
                         if (!state.UI.filename.empty())
                         {
+                            state.UI.Is_text_input_Active = false;
                             for (int i=0;i<canvas_height;i++)
                             {
                                 for (int j=0;j<canvas_width;j++)
