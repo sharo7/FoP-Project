@@ -1,4 +1,6 @@
 #include "variables.h"
+#include "interpreter.h"
+
 
 int processValue(const Value &v) {
     switch (v.type) {
@@ -81,18 +83,26 @@ void hideVariable(const string &name, int requesterSpriteId) {
     }
 }
 
-template<typename T>
-T getVariableValue(const string &name, int requesterSpriteId) {
-    int variableIdent = processValue(variables[name].value);
-    if (variables.find(name) != variables.end()) {
-        if (variables[name].isGlobal || variables[name].ownerSpriteId == requesterSpriteId) {
-            if (variableIdent == 1)
-                return variables[name].value.numVal;
-            if (variableIdent == 2)
-                return variables[name].value.strVal;
-            if (variableIdent == 3)
-                return variables[name].value.boolVal;
-        }
-    }
+template<>
+double getVariableValue<double>(const string &name, int requesterSpriteId) {
+    if (variables.find(name) != variables.end())
+        if (variables[name].isGlobal || variables[name].ownerSpriteId == requesterSpriteId)
+            return variables[name].value.numVal;
     return NAN;
+}
+
+template<>
+string getVariableValue<string>(const string &name, int requesterSpriteId) {
+    if (variables.find(name) != variables.end())
+        if (variables[name].isGlobal || variables[name].ownerSpriteId == requesterSpriteId)
+            return variables[name].value.strVal;
+    return "";
+}
+
+template<>
+bool getVariableValue<bool>(const string &name, int requesterSpriteId) {
+    if (variables.find(name) != variables.end())
+        if (variables[name].isGlobal || variables[name].ownerSpriteId == requesterSpriteId)
+            return variables[name].value.boolVal;
+    return false;
 }

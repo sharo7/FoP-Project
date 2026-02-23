@@ -2,7 +2,9 @@
 #define SCRATCH_VARIABLES_H
 
 #include <bits/stdc++.h>
-#include "interpreter.h"
+// Forward-declare Value to break the circular dependency with interpreter.h
+// (interpreter.h includes variables.h, so we cannot include it here)
+struct Value;
 
 using namespace std;
 
