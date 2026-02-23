@@ -31,13 +31,19 @@ target_include_directories(Fop_Scratch PRIVATE
         ${SDL2_MIXER_INCLUDE_DIRS}
 )
 
+target_compile_definitions(Fop_Scratch PRIVATE SDL_MAIN_HANDLED)
+
 target_link_libraries(Fop_Scratch PRIVATE
-        ${SDL2_LIBRARIES}
+        $<$<BOOL:${WIN32}>:mingw32>
+        SDL2::SDL2
         SDL2_image
         SDL2_ttf
         SDL2_mixer
 )
 
+if(WIN32)
+    set_target_properties(Fop_Scratch PROPERTIES LINK_FLAGS "-mconsole")
+endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/saves)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/sprites)
@@ -56,9 +62,16 @@ target_include_directories(costume_editor PRIVATE
         ${SDL2_MIXER_INCLUDE_DIRS}
 )
 
+target_compile_definitions(costume_editor PRIVATE SDL_MAIN_HANDLED)
+
 target_link_libraries(costume_editor PRIVATE
-        ${SDL2_LIBRARIES}
+        $<$<BOOL:${WIN32}>:mingw32>
+        SDL2::SDL2
         SDL2_image
         SDL2_ttf
         SDL2_mixer
 )
+
+if(WIN32)
+    set_target_properties(costume_editor PROPERTIES LINK_FLAGS "-mconsole")
+endif()
