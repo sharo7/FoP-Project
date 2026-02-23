@@ -1,4 +1,5 @@
 #include "sprite.h"
+SDL_Rect gameArea;
 
 void setGameArea(int x, int y, int w, int h) {
     gameArea.x = x;

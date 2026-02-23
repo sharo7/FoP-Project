@@ -1,5 +1,22 @@
 #include "operators.h"
 
+template double addition<double>(double, double);
+template double subtraction<double>(double, double);
+template double multiplication<double>(double, double);
+template double division<double>(double, double);
+template double myModulus<double>(double, double);
+template bool isEqual<double>(double, double);
+template bool isGreaterThan<double>(double, double);
+template bool isLessThan<double>(double, double);
+template double myAbs<double>(double);
+template bool myAnd<bool>(bool, bool);
+template bool myOr<bool>(bool, bool);
+template bool myNot<bool>(bool);
+template bool myXor<bool>(bool, bool);
+template size_t lengthOfString<string>(const string &);
+template string stringConcat<string, string>(const string &, const string &);
+
+
 template<typename T>
 T addition(T a, T b) {
     static_assert(is_arithmetic<T>::value, "input must be arithmetic");
@@ -31,7 +48,10 @@ T myModulus(T a, T b) {
     static_assert(is_arithmetic<T>::value, "input must be arithmetic");
     if (b == 0)
         throw invalid_argument("division by zero");
-    return a % b;
+    if constexpr (is_floating_point<T>::value)
+        return static_cast<T>(fmod(static_cast<double>(a), static_cast<double>(b)));
+    else
+        return a % b;
 }
 
 template<typename T>
@@ -129,3 +149,4 @@ string stringConcat(const T1 &s1, const T2 &s2) {
     static_assert(is_same<T1, string>::value && is_same<T2, string>::value, "Both inputs must be string");
     return s1 + s2;
 }
+
