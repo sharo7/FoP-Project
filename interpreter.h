@@ -20,6 +20,7 @@ enum DataType { NUMBER, STRING, BOOLEAN, SPRITE, STAGE, SDL_TEXTURE, SDL_RENDERE
 struct Value {
     DataType type;
     Sprite sprVal;
+    Sprite* sprPtr = nullptr;  // points to the real sprite in the sprites vector
     Stage stgVal;
     double numVal;
     string strVal;

@@ -87,89 +87,96 @@ void makeInterpreters(const vector<Block *> &codeSpace, MultiInterpreter &multiI
  */
 
 void checkAndRun(Block *parent) {
+    // SPR(p): returns a reference to the real sprite.
+    // If sprPtr is set (IDE path), it points directly into the sprites vector — modifications
+    // are immediately visible on screen. Falls back to sprVal for programmatic use.
+    auto SPR = [](Value &v) -> Sprite& {
+        return v.sprPtr ? *v.sprPtr : v.sprVal;
+    };
+
     switch (parent->type) {
         // Run: motion_commands
         case BlockType::Move:
-            move(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            move(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::TurnAnticlockwise:
-            turnAnticlockwise(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            turnAnticlockwise(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::TurnClockwise:
-            turnClockwise(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            turnClockwise(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::PointInDirection:
-            pointInDirection(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            pointInDirection(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::GoToXY:
-            goToXY(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal,
+            goToXY(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal,
                    parent->parameters.at(2).numVal);
             break;
 
         case BlockType::ChangeXBy:
-            changeXBy(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            changeXBy(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::ChangeYBy:
-            changeYBy(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            changeYBy(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::GoToMousePointer:
-            goToMousePointer(parent->parameters.at(0).sprVal);
+            goToMousePointer(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::GoToRandomPosition:
-            goToRandomPosition(parent->parameters.at(0).sprVal);
+            goToRandomPosition(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::IfOnEdgeBounce:
-            ifOnEdgeBounce(parent->parameters.at(0).sprVal);
+            ifOnEdgeBounce(SPR(parent->parameters.at(0)));
             break;
 
         // Run: looks_commands
         case BlockType::Show:
-            show(parent->parameters.at(0).sprVal);
+            show(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::Hide:
-            hide(parent->parameters.at(0).sprVal);
+            hide(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::AddCostume:
-            addCostume(parent->parameters.at(0).sprVal, parent->parameters.at(1).txtVal,
+            addCostume(SPR(parent->parameters.at(0)), parent->parameters.at(1).txtVal,
                        parent->parameters.at(2).strVal);
             break;
 
         case BlockType::NextCostume:
-            nextCostume(parent->parameters.at(0).sprVal);
+            nextCostume(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::SwitchCostumeTo:
-            switchCostumeTo(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal);
+            switchCostumeTo(SPR(parent->parameters.at(0)), parent->parameters.at(1).strVal);
             break;
 
         case BlockType::SetSizeTo:
-            setSizeTo(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            setSizeTo(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::ChangeSizeBy:
-            changeSizeBy(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            changeSizeBy(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::ClearGraphicEffects:
-            clearGraphicEffects(parent->parameters.at(0).sprVal);
+            clearGraphicEffects(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::SetColorEffectTo:
-            setColorEffectTo(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            setColorEffectTo(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::ChangeColorEffectBy:
-            changeColorEffectBy(parent->parameters.at(0).sprVal, parent->parameters.at(1).numVal);
+            changeColorEffectBy(SPR(parent->parameters.at(0)), parent->parameters.at(1).numVal);
             break;
 
         case BlockType::AddBackdrop:
@@ -186,11 +193,11 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::CostumeNumber:
-            costumeNumber(parent->parameters.at(0).sprVal);
+            costumeNumber(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::CostumeName:
-            costumeName(parent->parameters.at(0).sprVal);
+            costumeName(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::BackdropNumber:
@@ -202,60 +209,60 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::Size:
-            size(parent->parameters.at(0).sprVal);
+            size(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::Say:
-            say(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal, parent->parameters.at(2).rndVal,
-                parent->parameters.at(3).fntVal);
+            say(SPR(parent->parameters.at(0)), parent->parameters.at(1).strVal,
+                parent->parameters.at(2).rndVal, parent->parameters.at(3).fntVal);
             break;
 
         case BlockType::Think:
-            think(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal, parent->parameters.at(2).rndVal,
-                  parent->parameters.at(3).fntVal);
+            think(SPR(parent->parameters.at(0)), parent->parameters.at(1).strVal,
+                  parent->parameters.at(2).rndVal, parent->parameters.at(3).fntVal);
             break;
 
         case BlockType::SayForSeconds:
-            sayForSeconds(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal,
+            sayForSeconds(SPR(parent->parameters.at(0)), parent->parameters.at(1).strVal,
                           parent->parameters.at(2).rndVal, parent->parameters.at(3).fntVal,
                           parent->parameters.at(4).numVal);
             break;
 
         case BlockType::ThinkForSeconds:
-            thinkForSeconds(parent->parameters.at(0).sprVal, parent->parameters.at(1).strVal,
+            thinkForSeconds(SPR(parent->parameters.at(0)), parent->parameters.at(1).strVal,
                             parent->parameters.at(2).rndVal, parent->parameters.at(3).fntVal,
                             parent->parameters.at(4).numVal);
             break;
 
         // Run: sound_commands
         case BlockType::AddSound:
-            addSound(parent->parameters.at(0).sprVal,
+            addSound(SPR(parent->parameters.at(0)),
                      parent->parameters.at(1).strVal,
                      parent->parameters.at(2).strVal);
             break;
 
         case BlockType::StartSound:
-            startSound(parent->parameters.at(0).sprVal,
+            startSound(SPR(parent->parameters.at(0)),
                        parent->parameters.at(1).strVal);
             break;
 
         case BlockType::PlaySoundUntilDone:
-            playSoundUntilDone(parent->parameters.at(0).sprVal,
+            playSoundUntilDone(SPR(parent->parameters.at(0)),
                                parent->parameters.at(1).strVal);
             break;
 
         case BlockType::StopAllSounds:
-            stopAllSounds(parent->parameters.at(0).sprVal);
+            stopAllSounds(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::SetVolumeTo:
-            setVolumeTo(parent->parameters.at(0).sprVal,
+            setVolumeTo(SPR(parent->parameters.at(0)),
                         parent->parameters.at(1).strVal,
                         static_cast<int>(parent->parameters.at(2).numVal));
             break;
 
         case BlockType::ChangeVolumeBy:
-            changeVolumeBy(parent->parameters.at(0).sprVal,
+            changeVolumeBy(SPR(parent->parameters.at(0)),
                            parent->parameters.at(1).strVal,
                            static_cast<int>(parent->parameters.at(2).numVal));
             break;
@@ -267,11 +274,11 @@ void checkAndRun(Block *parent) {
 
         // Run: sensing_commands
         case BlockType::DistanceToSprite:
-            distanceToSprite(parent->parameters.at(0).sprVal, parent->parameters.at(1).sprVal);
+            distanceToSprite(SPR(parent->parameters.at(0)), SPR(parent->parameters.at(1)));
             break;
 
         case BlockType::DistanceToMouse:
-            distanceToMouse(parent->parameters.at(0).sprVal);
+            distanceToMouse(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::Timer:
@@ -283,15 +290,15 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::TouchingMousePointer:
-            touchingMousePointer(parent->parameters.at(0).sprVal);
+            touchingMousePointer(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::TouchingSprite:
-            touchingSprite(parent->parameters.at(0).sprVal, parent->parameters.at(1).sprVal);
+            touchingSprite(SPR(parent->parameters.at(0)), SPR(parent->parameters.at(1)));
             break;
 
         case BlockType::TouchingEdge:
-            touchingEdge(parent->parameters.at(0).sprVal);
+            touchingEdge(SPR(parent->parameters.at(0)));
             break;
 
         case BlockType::MouseX:
@@ -311,48 +318,40 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::SetDragMode:
-            setDragMode(parent->parameters.at(0).sprVal, parent->parameters.at(1).boolVal);
+            setDragMode(SPR(parent->parameters.at(0)), parent->parameters.at(1).boolVal);
             break;
 
         // Run: operators
         case BlockType::Addition:
-            addition(parent->parameters.at(0).numVal,
-                     parent->parameters.at(1).numVal);
+            addition(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::Subtraction:
-            subtraction(parent->parameters.at(0).numVal,
-                        parent->parameters.at(1).numVal);
+            subtraction(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::Multiplication:
-            multiplication(parent->parameters.at(0).numVal,
-                           parent->parameters.at(1).numVal);
+            multiplication(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::Division:
-            division(parent->parameters.at(0).numVal,
-                     parent->parameters.at(1).numVal);
+            division(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::Modulos:
-            myModulus(parent->parameters.at(0).numVal,
-                      parent->parameters.at(1).numVal);
+            myModulus(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::IsEqual:
-            isEqual(parent->parameters.at(0).numVal,
-                    parent->parameters.at(1).numVal);
+            isEqual(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::IsGreaterThan:
-            isGreaterThan(parent->parameters.at(0).numVal,
-                          parent->parameters.at(1).numVal);
+            isGreaterThan(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::IsLessThan:
-            isLessThan(parent->parameters.at(0).numVal,
-                       parent->parameters.at(1).numVal);
+            isLessThan(parent->parameters.at(0).numVal, parent->parameters.at(1).numVal);
             break;
 
         case BlockType::MyAbs:
@@ -380,13 +379,11 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::MyAnd:
-            myAnd(parent->parameters.at(0).boolVal,
-                  parent->parameters.at(1).boolVal);
+            myAnd(parent->parameters.at(0).boolVal, parent->parameters.at(1).boolVal);
             break;
 
         case BlockType::MyOr:
-            myOr(parent->parameters.at(0).boolVal,
-                 parent->parameters.at(1).boolVal);
+            myOr(parent->parameters.at(0).boolVal, parent->parameters.at(1).boolVal);
             break;
 
         case BlockType::MyNot:
@@ -394,8 +391,7 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::MyXor:
-            myXor(parent->parameters.at(0).boolVal,
-                  parent->parameters.at(1).boolVal);
+            myXor(parent->parameters.at(0).boolVal, parent->parameters.at(1).boolVal);
             break;
 
         case BlockType::LengthOfString:
@@ -408,8 +404,7 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::StringConcat:
-            stringConcat(parent->parameters.at(0).strVal,
-                         parent->parameters.at(1).strVal);
+            stringConcat(parent->parameters.at(0).strVal, parent->parameters.at(1).strVal);
             break;
 
         // Run: variables
@@ -421,13 +416,13 @@ void checkAndRun(Block *parent) {
         case BlockType::SetVariableValue:
             setVariableValue(parent->parameters.at(0).strVal,
                              static_cast<int>(parent->parameters.at(1).numVal),
-                             parent->parameters.at(2).numVal);
+                             parent->parameters.at(2));
             break;
 
         case BlockType::ChangeVariableValue:
             changeVariableValue(parent->parameters.at(0).strVal,
                                 static_cast<int>(parent->parameters.at(1).numVal),
-                                parent->parameters.at(2).numVal);
+                                parent->parameters.at(2));
             break;
 
         case BlockType::ShowVariable:
@@ -441,13 +436,13 @@ void checkAndRun(Block *parent) {
             break;
 
         case BlockType::GetVariableValue: {
-            if (processValue(variables[parent->parameters.at(0).strVal].value.numVal) == 1)
+            if (processValue(variables[parent->parameters.at(0).strVal].value) == 1)
                 getVariableValue<double>(parent->parameters.at(0).strVal,
                                          static_cast<int>(parent->parameters.at(1).numVal));
-            else if (processValue(variables[parent->parameters.at(0).strVal].value.numVal) == 2)
+            else if (processValue(variables[parent->parameters.at(0).strVal].value) == 2)
                 getVariableValue<string>(parent->parameters.at(0).strVal,
                                          static_cast<int>(parent->parameters.at(1).numVal));
-            else if (processValue(variables[parent->parameters.at(0).strVal].value.numVal) == 3)
+            else if (processValue(variables[parent->parameters.at(0).strVal].value) == 3)
                 getVariableValue<bool>(parent->parameters.at(0).strVal,
                                        static_cast<int>(parent->parameters.at(1).numVal));
             break;
